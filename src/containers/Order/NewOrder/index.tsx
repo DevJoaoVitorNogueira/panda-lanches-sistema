@@ -31,7 +31,7 @@ export const NewOrder = (): JSX.Element => {
 
       setMessage("Pedido realizado!");
 
-      setInterval(() => navigate("/add-itens"), 2000);
+      await navigate(`/listapedidos`);
 
       return data;
     } catch (err: any) {

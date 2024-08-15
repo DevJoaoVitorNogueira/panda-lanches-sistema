@@ -23,6 +23,8 @@ import {
   EditStock,
   EditSpends,
   RegisterProducts,
+  AddIngredient,
+  SeeLogin,
 } from "../containers";
 
 export const Routers = (): JSX.Element => {
@@ -41,7 +43,7 @@ export const Routers = (): JSX.Element => {
         <Route path="/novopedido" element={<NewOrder />} />
         <Route path="/financas" element={<Finance />} />
         <Route path="/cadastrodegastos" element={<RegisterExpenses />} />
-        <Route path="/finalizarpedido" element={<FinishOrder />} />
+        <Route path="/finalizarpedido/:id" element={<FinishOrder />} />
         <Route path="/cadastrarmesa" element={<RegisterTable />} />
         <Route path="/listagemesas" element={<TableList />} />
         <Route path="/gastos" element={<Spends />} />
@@ -51,7 +53,9 @@ export const Routers = (): JSX.Element => {
         <Route path="/add-item/:id" element={<AddItem />} />
         <Route path="/stock/:id" element={<EditStock />} />
         <Route path="/edit-spends/:id" element={<EditSpends />} />
-        <Route path="cadastrarprodutos" element={<RegisterProducts />} />
+        <Route path="/cadastrarprodutos" element={<RegisterProducts />} />
+        <Route path="/add-ingredient" element={<AddIngredient />} />
+        <Route path="/vercliente/:id" element={<SeeLogin />} />
       </Routes>
     </Router>
   );

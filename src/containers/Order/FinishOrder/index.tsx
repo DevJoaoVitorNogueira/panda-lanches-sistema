@@ -1,220 +1,164 @@
+import React, { useState, useEffect } from "react";
 import Header from "../../../components/Header";
-import InputMask from "react-input-mask";
 import SaveIcon from "@mui/icons-material/Save";
 import CancelIcon from "@mui/icons-material/Cancel";
 import api from "../../../axiosConfig";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
-
-interface Product {
-  name: string;
-  quantity: number;
-}
-interface Gift {
-  name: string;
-  quantity: number;
-}
+import { useNavigate, useParams } from "react-router-dom";
 
 export const FinishOrder = (): JSX.Element => {
-  const [orderDate, setOrderDate] = useState(
-    new Date().toISOString().split("T")[0]
-  );
-  const [totalValue, setTotalValue] = useState("");
-  const [paymentStatus, setPaymentStatus] = useState("pending");
+  const { id } = useParams();
+  const [paymentControl, setPaymentControl] = useState("a pagar");
+  const [typePayment, setTypePayment] = useState<string>("");
   const [phone, setPhone] = useState("");
-  const [description, setDescription] = useState("");
+  const [mail, setMail] = useState("");
+  const [gifts, setGifts] = useState<any[]>([]);
+  const [giftQuantity, setGiftQuantity] = useState<number>(0);
+  const [selectedGift, setSelectedGift] = useState<string>("");
   const [message, setMessage] = useState<string>("");
-  const [order, setOrder] = useState<any[]>([]);
-  const [products, setProducts] = useState<Product[]>([
-    { name: "", quantity: 1 },
-  ]);
-  const [gifts, setGifts] = useState<Gift[]>([{ name: "", quantity: 1 }]);
 
   const navigate = useNavigate();
 
-  const buttonBack = () => {
-    navigate("/pedidos");
-  };
+  useEffect(() => {
+    const fetchGifts = async () => {
+      try {
+        const { data } = await api.get("product");
+        setGifts(data.data);
+      } catch (error) {
+        console.error("Error fetching gifts", error);
+      }
+    };
 
-  //Atualiza um campo específico (field) de um produto específico (index) na lista de produtos.
-  //Copia a lista de produtos (newProducts), modifica o valor do campo e atualiza o estado com a nova lista.
-  const handleProductChange = (
-    index: number,
-    field: string,
-    value: string | number
-  ) => {
-    const newProducts = [...products];
-    newProducts[index][field as keyof Product] = value as never;
-    setProducts(newProducts);
-  };
+    fetchGifts();
+  }, []);
 
-  //adiciona um campo noivo
-  const addProductField = () => {
-    setProducts([...products, { name: "", quantity: 1 }]);
-  };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault(); // Impede o comportamento padrão do formulário
 
-  const handleGiftChange = (
-    index: number,
-    field: string,
-    value: string | number
-  ) => {
-    const newGifts = [...gifts];
-    newGifts[index][field as keyof Gift] = value as never;
-    setGifts(newGifts);
-  };
-
-  const addGiftField = () => {
-    setGifts([...gifts, { name: "", quantity: 1 }]);
-  };
-
-  const fetchOrder = async () => {
     try {
-      const response = await api.get("/order");
-      setOrder(response.data);
-    } catch (err) {
-      console.error("Erro ao finalizar pedido", err);
+      await api.put(`order/${id}`, {
+        payment_control: paymentControl,
+        type_payment: typePayment,
+        phone,
+        email: mail,
+        gift_id: selectedGift,
+        gift_quantity: giftQuantity,
+      });
+      setMessage("Pedido finalizado com sucesso!");
+      setTimeout(() => navigate("/pedidos"), 2000); // Aguarda 2 segundos antes de navegar
+    } catch (error) {
+      console.error("Error submitting order", error);
+      setMessage("Erro ao finalizar pedido.");
     }
   };
 
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e?.preventDefault();
-    try {
-      setMessage("Carregando informações...");
+  const handleCancel = () => navigate(-1);
 
-      const data = await api.post("/order/add", {});
-      setMessage("O Pedido foi finalizado com sucesso");
-      fetchOrder();
-
-      return data;
-    } catch (err) {
-      setMessage("Erro ao finalizar pedido, tente novamente");
-      return err;
-    }
-  };
   return (
-    <div className="min-h-screen w-full bg-gray-400 flex flex-col">
+    <div className="flex flex-col min-h-screen bg-gray-400">
       <Header />
       <main className="flex-1 flex flex-col mt-10 items-center p-6">
-        <h1 className="text-2xl lg:text-4xl font-bold mb-7">
-          Finalizar Pedido
-        </h1>
-        <form
-          className="w-full max-w-4xl bg-white p-6 md:p-8 lg:p-10 border-2 border-black rounded-lg shadow-lg"
-          onSubmit={onSubmit}
-        >
-          <div className="flex flex-col mb-6">
-            <label className="font-bold mb-2">Produtos:</label>
-            {products.map((product, index) => (
-              <div key={index} className="flex mb-2">
-                <input
-                  type="text"
-                  placeholder="Produto"
-                  className="w-3/4 px-4 py-3 border-2 border-black rounded text-lg mr-2"
-                  value={product.name}
-                  onChange={(e) =>
-                    handleProductChange(index, "name", e.target.value)
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Quantidade"
-                  className="w-1/4 px-4 py-3 border-2 border-black rounded text-lg"
-                  value={product.quantity}
-                  onChange={(e) =>
-                    handleProductChange(
-                      index,
-                      "quantity",
-                      Number(e.target.value)
-                    )
-                  }
-                />
-              </div>
-            ))}
-            <button
-              type="button"
-              className="bg-blue-500 text-white font-bold px-4 py-2 rounded mt-2"
-              onClick={addProductField}
-            >
-              Adicionar Produto
-            </button>
-          </div>
-          <div className="flex flex-col mb-6">
-            <label className="font-bold mb-2">Brindes:</label>
-            {gifts.map((gift, index) => (
-              <div key={index} className="flex mb-2">
-                <input
-                  type="text"
-                  placeholder="Brinde"
-                  className="w-3/4 px-4 py-3 border-2 border-black rounded text-lg mr-2"
-                  value={gift.name}
-                  onChange={(e) =>
-                    handleGiftChange(index, "name", e.target.value)
-                  }
-                />
-                <input
-                  type="number"
-                  placeholder="Quantidade"
-                  className="w-1/4 px-4 py-3 border-2 border-black rounded text-lg"
-                  value={gift.quantity}
-                  onChange={(e) =>
-                    handleGiftChange(index, "quantity", Number(e.target.value))
-                  }
-                />
-              </div>
-            ))}
-            <button
-              type="button"
-              className="bg-blue-500 text-white font-bold px-4 py-2 rounded mt-2"
-              onClick={addGiftField}
-            >
-              Adicionar Brinde
-            </button>
-          </div>
+        <h1 className="text-xl lg:text-3xl font-bold mb-7">Finalizar Pedido</h1>
 
-          <div className="flex flex-col mb-6">
-            <label className="font-bold mb-2">Status do Pagamento:</label>
+        {message && (
+          <div
+            className={`mb-4 p-4 border-2 rounded ${
+              message.includes("sucesso")
+                ? "bg-green-200 border-green-400 text-green-800"
+                : "bg-red-200 border-red-400 text-red-800"
+            }`}
+          >
+            {message}
+          </div>
+        )}
+
+        <form
+          onSubmit={handleSubmit}
+          className="w-full max-w-3xl bg-white border-2 border-black p-6 rounded shadow-lg"
+        >
+          <div className="flex flex-col mb-4">
+            <label className="font-bold mb-2">
+              Selecione um brinde (opcional)
+            </label>
             <select
-              className="w-full px-4 py-3 border-2 border-black rounded text-lg"
-              value={paymentStatus}
-              onChange={(e) => setPaymentStatus(e.target.value)}
+              value={selectedGift}
+              onChange={(e) => setSelectedGift(e.target.value)}
+              className="px-4 py-2 border-2 border-black rounded"
             >
-              <option value="pending">Pendente</option>
-              <option value="completed">Concluído</option>
+              <option value="">Selecione um brinde</option>
+              {gifts.map((gift: any) => (
+                <option key={gift.id} value={gift.id}>
+                  {gift.name}
+                </option>
+              ))}
+            </select>
+            <input
+              className="mt-2 px-4 py-2 border-2 border-black rounded"
+              value={giftQuantity}
+              type="number"
+              onChange={(e) => setGiftQuantity(Number(e.target.value))}
+              min="0"
+              placeholder="Quantidade"
+            />
+          </div>
+          <div className="flex flex-col mb-4">
+            <label className="font-bold mb-2">Controle de Pagamento</label>
+            <select
+              value={paymentControl}
+              onChange={(e) => setPaymentControl(e.target.value)}
+              className="px-4 py-2 border-2 border-black rounded"
+            >
+              <option value="a pagar">a pagar</option>
+              <option value="concluido">concluído</option>
             </select>
           </div>
-          <div className="flex flex-col mb-6">
-            <label className="font-bold mb-2">Telefone do Cliente:</label>
-            <InputMask
-              mask="(99) 99999-9999"
-              placeholder="Digite o telefone"
-              className="w-full px-4 py-3 border-2 border-black rounded text-lg"
+          <div className="flex flex-col mb-4">
+            <label className="font-bold mb-2">Tipo de Pagamento</label>
+            <select
+              value={typePayment}
+              onChange={(e) => setTypePayment(e.target.value)}
+              className="px-4 py-2 border-2 border-black rounded"
+            >
+              <option value="">Selecione um tipo</option>
+              <option value="pix">pix</option>
+              <option value="credit">crédito</option>
+              <option value="debit">débito</option>
+            </select>
+          </div>
+          <div className="flex flex-col mb-4">
+            <label className="font-bold mb-2">Email (opcional)</label>
+            <input
+              value={mail}
+              onChange={(e) => setMail(e.target.value)}
+              type="email"
+              placeholder="Digite o email"
+              className="px-4 py-2 border-2 border-black rounded"
+            />
+          </div>
+          <div className="flex flex-col mb-4">
+            <label className="font-bold mb-2">Telefone (opcional)</label>
+            <input
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              type="tel"
+              placeholder="Digite o telefone"
+              className="px-4 py-2 border-2 border-black rounded"
             />
           </div>
-          <div className="flex flex-col mb-6">
-            <label className="font-bold mb-2">Descrição (opcional):</label>
-            <textarea
-              placeholder="Digite a descrição do pedido"
-              className="w-full px-4 py-3 border-2 border-black rounded text-lg"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-            />
-          </div>
+
           <div className="flex justify-between mt-6">
             <button
               type="submit"
-              className="bg-green-500 text-white font-bold px-6 py-3 rounded flex items-center text-lg hover:bg-green-600 transition duration-300"
+              className="bg-green-500 text-white font-bold px-4 py-2 rounded flex items-center hover:bg-green-600 transition duration-300"
             >
-              Finalizar Pedido
+              Fechar pedido
               <SaveIcon className="ml-2" />
             </button>
             <button
-              onClick={buttonBack}
               type="button"
-              className="bg-red-500 text-white font-bold px-6 py-3 rounded flex items-center text-lg hover:bg-red-600 transition duration-300"
+              onClick={handleCancel}
+              className="bg-red-500 text-white font-bold px-4 py-2 rounded flex items-center hover:bg-red-600 transition duration-300"
             >
-              Sair
+              Cancelar
               <CancelIcon className="ml-2" />
             </button>
           </div>

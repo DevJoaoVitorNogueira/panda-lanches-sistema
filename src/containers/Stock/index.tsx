@@ -54,6 +54,15 @@ export const Stock = (): JSX.Element => {
               </span>
               <AddCircleIcon className="text-black text-3xl sm:text-4xl lg:text-5xl xl:text-6xl" />
             </button>
+            <button
+              onClick={() => navigate("/add-ingredient")}
+              className="flex flex-col items-center p-4 sm:p-6 lg:p-8 xl:p-10 bg-gray-400 border-2 border-black text-black shadow-md hover:bg-gray-700 transition ease-in-out duration-300"
+            >
+              <span className="text-xl sm:text-2xl lg:text-3xl xl:text-4xl font-bold text-center mb-2">
+                Cadastrar Ingredientes do Produto
+              </span>
+              <AddCircleIcon className="text-black text-3xl sm:text-4xl lg:text-5xl xl:text-6xl" />
+            </button>
           </div>
         </main>
       </div>

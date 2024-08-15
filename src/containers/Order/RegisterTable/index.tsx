@@ -23,7 +23,7 @@ export const RegisterTable = (): JSX.Element => {
       });
 
       setMessage("A mesa foi cadastrada com sucesso");
-      setTableNumber(""); // Limpa o campo após o cadastro
+      setTableNumber("");
 
       return data;
     } catch (err) {

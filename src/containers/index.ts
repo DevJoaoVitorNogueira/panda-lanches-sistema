@@ -21,3 +21,5 @@ export * from './Order/AddItem'
 export * from "./Stock/EditStock"
 export * from "./Finance/EditSpends"
 export * from "./Stock/RegisterProduct"
+export * from './Stock/AddIngredient'
+export * from "./Clients/SeeLogin"
