@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import api from "../../../axiosConfig";
 import EditIcon from "@mui/icons-material/Edit";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import Header from "../../../components/Header";
 
 export const AddItem = (): JSX.Element => {
@@ -14,6 +15,7 @@ export const AddItem = (): JSX.Element => {
   const [selectedDescription, setSelectedDescription] =
     useState<boolean>(false);
 
+  const navigate = useNavigate();
   let { id } = useParams();
 
   useEffect(() => {
@@ -71,7 +73,16 @@ export const AddItem = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-gray-400">
       <Header />
-      <h1 className="text-center font-bold text-2xl">Adicione um Item</h1>
+      <div className="flex items-center justify-between p-4">
+        <button
+          onClick={() => navigate("/listapedidos")}
+          className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 font-bold flex items-center"
+        >
+          <ArrowBackIcon className="mr-2" />
+          Voltar
+        </button>
+        <h1 className="text-center font-bold text-2xl">Adicione um Item</h1>
+      </div>
       <div className="flex p-2 mt-10 font-bold gap-2">
         {category?.map((c) => (
           <button

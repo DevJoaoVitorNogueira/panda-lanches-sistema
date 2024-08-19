@@ -72,13 +72,6 @@ export const ListOrder = (): JSX.Element => {
     <div className="flex flex-col min-h-screen w-full bg-gray-400">
       <Header />
       <div className="flex justify-between items-center py-3 px-6 mt-6">
-        <button
-          onClick={() => navigate(-1)}
-          className="flex items-center px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-        >
-          <ArrowBackIcon className="mr-2" />
-          Voltar
-        </button>
         <div className="flex">
           <button
             onClick={() => setFilter("recebido")}
@@ -230,3 +223,5 @@ export const ListOrder = (): JSX.Element => {
     </div>
   );
 };
+
+export default ListOrder;

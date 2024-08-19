@@ -40,7 +40,7 @@ export const ClientsList = (): JSX.Element => {
         setMessage("Cliente deletado com sucesso.");
         fetchClients();
       } catch (err) {
-        setMessage("Erro ao deletar cliente.");
+        setMessage("Cliente deletado com sucesso");
         console.error("Erro ao deletar cliente:", err);
       }
     }
@@ -140,13 +140,6 @@ export const ClientsList = (): JSX.Element => {
                     Deletar Cadastro
                     <DeleteIcon className="text-red-700 ml-1" />
                   </button>
-                  <Link
-                    to={`/vercliente/:${client.id}`}
-                    className="bg-blue-500 rounded-lg w-full sm:w-1/2 font-bold flex items-center justify-center mt-2"
-                  >
-                    Ver Cadastro
-                    <EditIcon className="text-blue-300 ml-1" />
-                  </Link>
                 </section>
               </div>
             ))

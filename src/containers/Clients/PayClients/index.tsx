@@ -50,7 +50,7 @@ export const PayClient = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-gray-400">
       <Header />
-      <main className="flex-1 flex flex-col mt-10 p-6">
+      <main className="flex-1 flex  items-center  flex-col mt-10 p-6">
         <div className="flex items-center justify-between w-full max-w-6xl mb-6">
           <button
             onClick={() => navigate(-1)}
