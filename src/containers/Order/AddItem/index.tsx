@@ -22,7 +22,6 @@ export const AddItem = (): JSX.Element => {
     const productsFetch = async () => {
       try {
         const { data } = await api.get("/product");
-
         setProduct(data.data);
       } catch (err) {
         return err;
@@ -32,7 +31,6 @@ export const AddItem = (): JSX.Element => {
     const categoryFetch = async () => {
       try {
         const { data } = await api.get("/category");
-
         setCategory(data.categorie);
       } catch (err) {
         return err;
@@ -51,6 +49,7 @@ export const AddItem = (): JSX.Element => {
   };
 
   const handleSubmit = async (evt: React.FormEvent<HTMLFormElement>) => {
+    evt.preventDefault();
     try {
       const { data } = await api.post("/order/add", {
         order_id: id,
@@ -73,7 +72,7 @@ export const AddItem = (): JSX.Element => {
   return (
     <div className="min-h-screen bg-gray-400">
       <Header />
-      <div className="flex items-center justify-between p-4">
+      <div className="flex flex-col sm:flex-row items-center justify-between p-4">
         <button
           onClick={() => navigate("/listapedidos")}
           className="bg-gray-300 text-black px-4 py-2 rounded hover:bg-gray-400 font-bold flex items-center"
@@ -83,11 +82,13 @@ export const AddItem = (): JSX.Element => {
         </button>
         <h1 className="text-center font-bold text-2xl">Adicione um Item</h1>
       </div>
-      <div className="flex p-2 mt-10 font-bold gap-2">
+      <div className="flex p-2 mt-10 font-bold gap-2 overflow-x-auto">
         {category?.map((c) => (
           <button
             key={c.id}
-            className={position === c.id ? "underline" : ""}
+            className={`whitespace-nowrap ${
+              position === c.id ? "underline" : ""
+            }`}
             onClick={() => setPosition(c.id)}
           >
             {c.name}
@@ -95,7 +96,7 @@ export const AddItem = (): JSX.Element => {
         ))}
       </div>
       <div className="p-2 mt-10">
-        <div className="grid grid-cols-2 gap-4 justify-center items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {product?.map(
             (p) =>
               position === p.category_id && (
@@ -103,7 +104,7 @@ export const AddItem = (): JSX.Element => {
                   noValidate
                   onSubmit={handleSubmit}
                   key={p.id}
-                  className="bg-slate-200 h-auto w-auto"
+                  className="bg-slate-200 p-4 rounded-lg shadow-md"
                 >
                   <h2 className="font-bold text-center">{p.name}</h2>
                   <div className="mt-2 p-2">
@@ -111,7 +112,7 @@ export const AddItem = (): JSX.Element => {
                     <p>{p.description}</p>
                   </div>
 
-                  <div className="flex justify-center py-2 gap-2">
+                  <div className="flex justify-center py-2 gap-2 items-center">
                     <button type="button" onClick={handleCloseDescriptionArea}>
                       <EditIcon />
                     </button>
@@ -147,17 +148,19 @@ export const AddItem = (): JSX.Element => {
         </div>
 
         {selectedDescription && (
-          <div className="absolute left-10 h-96 w-[300px] top-52 flex flex-col  items-center bg-white">
-            <textarea
-              onChange={(evt) => setDescription(evt.target.value)}
-              className="border-2 border-slate-400 h-72 w-[290px] mt-2"
-            ></textarea>
-            <button
-              className="mt-10 bg-green-400 text-white font-bold p-2 rounded-md"
-              onClick={handleCloseDescriptionArea}
-            >
-              Confirmar
-            </button>
+          <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+            <div className="bg-white p-4 rounded-lg">
+              <textarea
+                onChange={(evt) => setDescription(evt.target.value)}
+                className="border-2 border-slate-400 h-72 w-full mt-2"
+              ></textarea>
+              <button
+                className="mt-4 bg-green-400 text-white font-bold p-2 rounded-md"
+                onClick={handleCloseDescriptionArea}
+              >
+                Confirmar
+              </button>
+            </div>
           </div>
         )}
       </div>
