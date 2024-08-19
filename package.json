@@ -20,12 +20,10 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-input-mask": "^2.0.4",
-<<<<<<< HEAD
+
     "react-router-dom": "^6.26.1",
     "react-scripts": "5.0.1",
-=======
-    "react-scripts": "^3.0.1",
->>>>>>> c3828dc6d3dd038b25a2a861d84c3a1406b1e536
+
     "typescript": "^4.9.5",
     "web-vitals": "^2.1.4"
   },
